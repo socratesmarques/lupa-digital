@@ -1,187 +1,69 @@
-# Lupa Digital V0.2.0 — Perfil Baixa Visão
+# Lupa Digital V0.4.3 — Orange Pi 3 LTS
 
-Protótipo desenvolvido para usar a **Creative Labs VF0780 / Creative Senz3D**
-como câmera RGB de uma lupa eletrônica.
+Esta versão corresponde à montagem física atual.
 
-A V0.2.0 deixa de priorizar zoom digital muito alto e passa a priorizar
-**qualidade de captura e legibilidade**.
-
-## Método adotado
+## Montagem final
 
 ```text
-Boa iluminação
-      +
-Câmera próxima ao texto
-      +
-Texto ocupando grande parte do quadro 720p
-      ↓
-Captura nativa 1280x720
-      ↓
-Redução leve de ruído
-      ↓
-Correção de iluminação
-      ↓
-Contraste local
-      ↓
-Zoom moderado: 1.0x a 2.5x
-      ↓
-Nitidez
-      ↓
-Modo visual para baixa visão
-      ↓
-Tela LCD
+             ORANGE PI 3 LTS
+             Cabeçalho GPIO
+
+  PINO 1  ●  ← 3.3V ───────── Shield VCC
+
+  PINO 9  ●  ← GND ────────── Shield GND
+
+  PINO 11 ●  ← Shield A / D2 ─ CIMA
+  PINO 13 ●  ← Shield B / D3 ─ DIREITA
+  PINO 15 ●  ← Shield C / D4 ─ BAIXO
+  PINO 16 ●  ← Shield D / D5 ─ ESQUERDA
+
+  PINO 18 ●  ← Shield K / D8 ─ FREEZE
+
+  PINO 22 ●  ← Shield F / D7 ─ ZOOM +
+  PINO 24 ●  ← Shield E / D6 ─ ZOOM -
 ```
 
-## Por que fazer assim?
+## Funções
 
-Se a câmera estiver muito longe, as letras ocupam poucos pixels.
-Nenhum filtro consegue recuperar detalhes que nunca chegaram ao sensor.
+| Shield | Sinal | Orange Pi físico | Função |
+|---|---|---:|---|
+| A | D2 | 11 | mover cima |
+| B | D3 | 13 | mover direita |
+| C | D4 | 15 | mover baixo |
+| D | D5 | 16 | mover esquerda |
+| E | D6 | 24 | Zoom - |
+| F | D7 | 22 | Zoom + |
+| K | D8 | 18 | Freeze |
 
-Por isso, a V0.2.0 ajuda o usuário a melhorar a imagem **antes do zoom**.
-
-## Assistente de posicionamento
-
-O HUD mostra:
+Alimentação:
 
 ```text
-Nitidez: BAIXA / OK / BOA
-Luz: ESCURA / BOA / MUITO CLARA
+Shield VCC -> pino físico 1 (3.3V)
+Shield GND -> pino físico 9 (GND)
 ```
 
-Também mostra orientações como:
+O pino físico 7 não é utilizado nesta versão.
 
-```text
-DICA: aproxime/afaste a camera ate as letras ficarem nitidas
-```
-
-ou:
-
-```text
-DICA: adicione luz difusa sobre o texto
-```
-
-Esse recurso não mede distância em centímetros.
-Ele mede diretamente a nitidez e a iluminação da imagem capturada.
-
-## Zoom
-
-Faixa principal:
-
-```text
-1.00x
-1.25x
-1.50x
-1.75x
-2.00x
-2.25x
-2.50x
-```
-
-O sistema inicia em **1.5x**.
-
-## Modos para baixa visão
-
-A tecla `F` alterna entre:
-
-- Cor melhorada
-- Escala de cinza
-- Alto contraste
-- Preto no branco
-- Branco no preto
-- Amarelo no preto
-
-## Guia de leitura
-
-Pressione `R`.
-
-A tela destaca apenas uma faixa horizontal para ajudar a acompanhar uma linha.
-
-```text
-████████████████████████████
-
->   linha que estou lendo   <
-
-████████████████████████████
-```
-
-## Controles
-
-| Tecla | Ação |
-|---|---|
-| `+` / `=` | Zoom + |
-| `-` | Zoom - |
-| `W` | mover para cima |
-| `A` | mover para esquerda |
-| `D` | mover para direita |
-| `X` | mover para baixo |
-| `C` | centralizar |
-| `F` | trocar modo visual |
-| `Espaço` | freeze |
-| `R` | guia de leitura |
-| `H` | HUD |
-| `M` | tela cheia |
-| `S` | captura |
-| `Q` / `Esc` | sair |
-
-## Montagem física recomendada
-
-```text
-                CÂMERA
-                  │
-                  ▼
-          ┌─────────────┐
-       LED               LED
-        \                 /
-         \               /
-          ▼             ▼
-
-       ┌────────────────────┐
-       │                    │
-       │       TEXTO        │
-       │                    │
-       └────────────────────┘
-```
-
-Use luz difusa pelos lados para evitar reflexos na folha.
-
-Aproxime a câmera até as letras ocuparem uma parte grande da imagem,
-mas pare no ponto em que o indicador de nitidez estiver melhor.
-
-## Instalação
+## Testar
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-python3 main.py
+sudo python3 tools/teste_botoes_gpio.py
 ```
 
-## Diagnóstico da câmera
-
-```bash
-sudo apt install v4l-utils
-python3 tools/diagnostico_camera.py
-```
-
-## Testar processamento sem webcam
-
-```bash
-python3 tools/teste_processamento.py
-```
-
-## Próxima etapa
-
-Depois de identificar o modelo exato do Orange Pi, os controles podem virar:
+Resultado esperado:
 
 ```text
-BOTÃO 1 -> ZOOM +
-BOTÃO 2 -> ZOOM -
-BOTÃO 3 -> MODO
-BOTÃO 4 -> FREEZE
-BOTÃO 5 -> GUIA DE LEITURA
+A -> CIMA
+B -> DIREITA
+C -> BAIXO
+D -> ESQUERDA
+E -> ZOOM_MENOS
+F -> ZOOM_MAIS
+K -> FREEZE
 ```
 
-**Versão: 0.2.0**
+## Executar
 
-Objetivo principal: tornar a VF0780 mais útil como lupa eletrônica para
-pessoas com baixa visão.
+```bash
+sudo python3 main.py
+```

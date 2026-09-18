@@ -1,7 +1,7 @@
 from pathlib import Path
 
 APP_NAME = "Lupa Digital"
-VERSION = "0.3.0"
+VERSION = "0.2.0"
 WINDOW_TITLE = f"{APP_NAME} V{VERSION} - Perfil Baixa Visão / Creative VF0780"
 
 CAMERA_INDEX = 0
