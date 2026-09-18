@@ -6,6 +6,7 @@ import cv2
 from camera.camera import CameraVF0780
 from config.settings import *
 from hardware.controles import Acao, tecla_para_acao
+from hardware.botoes_gpio import BotoesGPIO
 from interface.display import Display, guia_leitura, hud
 from processamento.melhoria import (
     analisar_qualidade,
@@ -61,6 +62,9 @@ def main():
         WINDOW_TITLE,
         START_FULLSCREEN,
     )
+
+    botoes = BotoesGPIO()
+    botoes.iniciar()
 
     zoom_i = min(
         DEFAULT_ZOOM_INDEX,
@@ -217,9 +221,15 @@ def main():
 
             display.mostrar(exibicao)
 
-            acao = tecla_para_acao(
-                display.tecla()
-            )
+            # Botões físicos têm prioridade.
+            acao_gpio = botoes.ler()
+
+            if acao_gpio != Acao.NENHUMA:
+                acao = acao_gpio
+            else:
+                acao = tecla_para_acao(
+                    display.tecla()
+                )
 
             if acao == Acao.ZOOM_MAIS:
                 zoom_i = min(
@@ -299,6 +309,7 @@ def main():
         pass
 
     finally:
+        botoes.encerrar()
         camera.release()
         display.fechar()
         print("[OK] Lupa Digital encerrada.")

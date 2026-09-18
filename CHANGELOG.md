@@ -1,26 +1,8 @@
 # Changelog
 
-## [0.2.0] — Perfil Baixa Visão
+## [0.4.3]
 
-### Alterado
-- Zoom principal reduzido para 1.0x–2.5x.
-- Zoom inicial em 1.5x.
-- Lanczos4 como interpolação padrão.
-- Processamento prioriza legibilidade em vez de ampliação extrema.
-
-### Adicionado
-- Medidor de nitidez.
-- Medidor de iluminação.
-- Dicas de posicionamento físico da câmera.
-- Redução de ruído preservando bordas.
-- Guia de leitura com marcadores laterais.
-- Modos de contraste refinados.
-- Teste automático de processamento.
-
-### Mantido
-- Freeze.
-- Captura.
-- Navegação da área ampliada.
-- Fullscreen.
-- HUD.
-- Estrutura preparada para GPIO.
+- Mantida toda a montagem existente de A/B/C/D/K.
+- E / D6 corrigido para pino físico 24.
+- F / D7 mantido no pino físico 22.
+- Pino físico 7 deixou de ser usado.
