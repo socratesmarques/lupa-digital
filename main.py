@@ -7,7 +7,6 @@ import sys
 os.environ.setdefault("QT_ENABLE_HIGHDPI_SCALING", "1")
 
 import cv2
-from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QApplication
 
 from config.settings import APP_NAME, OPENCV_THREADS, START_FULLSCREEN, VERSION
@@ -19,7 +18,6 @@ def main() -> int:
     app = QApplication(sys.argv)
     app.setApplicationName(APP_NAME)
     app.setApplicationVersion(VERSION)
-    app.setAttribute(Qt.AA_UseHighDpiPixmaps)
     janela = JanelaPrincipal()
     janela.showFullScreen() if START_FULLSCREEN else janela.show()
     return app.exec()

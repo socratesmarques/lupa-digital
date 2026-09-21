@@ -33,6 +33,9 @@ virtual no autostart.
 
 ## Selecionar a câmera externa
 
+Por padrão, a lupa testa automaticamente as câmeras `0`, `2`, `1` e `3`.
+Para fixar uma câmera específica:
+
 ```bash
 LUPA_CAMERA=/dev/video2 python main.py
 ```
