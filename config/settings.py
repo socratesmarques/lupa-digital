@@ -1,55 +1,30 @@
+"""Configuração central com padrões leves para o Orange Pi 3 LTS."""
+from __future__ import annotations
+
+import os
+import platform
 from pathlib import Path
 
 APP_NAME = "Lupa Digital"
-VERSION = "0.2.0"
-WINDOW_TITLE = f"{APP_NAME} V{VERSION} - Perfil Baixa Visão / Creative VF0780"
+VERSION = "2.0.0"
+BASE_DIR = Path(__file__).resolve().parent.parent
+SCREENSHOT_DIR = BASE_DIR / "capturas"
 
-CAMERA_INDEX = 0
-CAMERA_WIDTH = 1280
-CAMERA_HEIGHT = 720
-CAMERA_FPS = 30
+IS_ARM = platform.machine().lower() in {"aarch64", "arm64", "armv7l"}
+CAMERA_DEVICE = os.getenv("LUPA_CAMERA", "0")
+CAMERA_WIDTH = int(os.getenv("LUPA_WIDTH", "640" if IS_ARM else "1280"))
+CAMERA_HEIGHT = int(os.getenv("LUPA_HEIGHT", "480" if IS_ARM else "720"))
+CAMERA_FPS = int(os.getenv("LUPA_FPS", "24" if IS_ARM else "30"))
 CAMERA_BUFFER_SIZE = 1
 PREFER_MJPG = True
+CAMERA_RETRY_MS = 1500
+FRAME_INTERVAL_MS = max(20, round(1000 / CAMERA_FPS))
+OPENCV_THREADS = 2 if IS_ARM else 4
 
-# Faixa principal de leitura para preservar detalhes da câmera 720p.
-ZOOM_LEVELS = [1.0, 1.25, 1.5, 1.75, 2.0, 2.25, 2.5]
-DEFAULT_ZOOM_INDEX = 2  # 1.5x
-
-PAN_STEP = 0.065
-
-# Qualidade máxima para a ampliação.
-UPSCALE_QUALITY = "maxima"
-
-# Melhorias de leitura.
-ENABLE_AUTO_GAMMA = True
-AUTO_GAMMA_TARGET = 0.50
-
-ENABLE_CLAHE = True
-CLAHE_CLIP_LIMIT = 2.0
-CLAHE_TILE_GRID = (8, 8)
-
-ENABLE_DENOISE = True
-DENOISE_STRENGTH = 3
-
-ENABLE_SHARPEN = True
-SHARPEN_BASE_STRENGTH = 0.68
-
-# Assistência para posicionar câmera e iluminação.
-ENABLE_QUALITY_ASSIST = True
-SHARPNESS_LOW = 55.0
-SHARPNESS_GOOD = 115.0
-BRIGHTNESS_DARK = 65.0
-BRIGHTNESS_BRIGHT = 205.0
-QUALITY_ROI_SCALE = 0.72
-
-# Interface.
-START_FULLSCREEN = False
-SHOW_HUD = True
-SHOW_READING_GUIDE = False
-READING_GUIDE_Y = 0.53
-READING_GUIDE_HEIGHT = 84
-SHOW_READING_MARKERS = True
-
+ZOOM_LEVELS = (1.0, 1.25, 1.5, 1.75, 2.0, 2.5, 3.0, 4.0)
+DEFAULT_ZOOM_INDEX = 2
+PAN_STEP = 0.07
+UPSCALE_INTERPOLATION = "linear" if IS_ARM else "cubic"
 DEFAULT_READING_MODE_INDEX = 0
-
-SCREENSHOT_DIR = Path("capturas")
+START_FULLSCREEN = os.getenv("LUPA_FULLSCREEN", "1" if IS_ARM else "0") == "1"
+SHOW_READING_GUIDE = False

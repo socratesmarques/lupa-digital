@@ -1,69 +1,61 @@
-import platform
+"""Abertura de webcam com baixa latência e fallback para Linux/Orange Pi."""
+from __future__ import annotations
+
+import sys
+import time
+
 import cv2
 
 
-class CameraVF0780:
-    def __init__(
-        self,
-        index=0,
-        width=1280,
-        height=720,
-        fps=30,
-        buffer_size=1,
-        prefer_mjpg=True,
-    ):
-        self.index = index
-        self.width_requested = width
-        self.height_requested = height
-        self.fps_requested = fps
+class Camera:
+    def __init__(self, device=0, width: int = 640, height: int = 480, fps: int = 24,
+                 buffer_size: int = 1, prefer_mjpg: bool = True, index=None):
+        if index is not None:
+            device = index
+        self.device = int(device) if str(device).isdigit() else str(device)
+        self.width, self.height, self.fps = width, height, fps
+        self.buffer_size, self.prefer_mjpg = buffer_size, prefer_mjpg
+        self.cap = None
 
-        # Em Linux/Orange Pi, V4L2 é o backend mais apropriado para webcam UVC.
-        if platform.system().lower() == "linux":
-            self.cap = cv2.VideoCapture(index, cv2.CAP_V4L2)
-        else:
-            self.cap = cv2.VideoCapture(index)
+    def open(self) -> bool:
+        self.release()
+        backends = [cv2.CAP_V4L2, cv2.CAP_ANY] if sys.platform.startswith("linux") else [cv2.CAP_ANY]
+        for backend in backends:
+            cap = cv2.VideoCapture(self.device, backend)
+            if not cap.isOpened():
+                cap.release()
+                continue
+            if self.prefer_mjpg:
+                cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*"MJPG"))
+            cap.set(cv2.CAP_PROP_FRAME_WIDTH, self.width)
+            cap.set(cv2.CAP_PROP_FRAME_HEIGHT, self.height)
+            cap.set(cv2.CAP_PROP_FPS, self.fps)
+            cap.set(cv2.CAP_PROP_BUFFERSIZE, self.buffer_size)
+            self.cap = cap
+            for _ in range(3):
+                cap.grab()
+                time.sleep(0.01)
+            return True
+        return False
 
-        if not self.cap.isOpened():
-            return
-
-        if prefer_mjpg:
-            self.cap.set(
-                cv2.CAP_PROP_FOURCC,
-                cv2.VideoWriter_fourcc(*"MJPG")
-            )
-
-        self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
-        self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
-        self.cap.set(cv2.CAP_PROP_FPS, fps)
-
-        try:
-            self.cap.set(cv2.CAP_PROP_BUFFERSIZE, buffer_size)
-        except Exception:
-            pass
-
-    def is_opened(self):
-        return self.cap.isOpened()
+    def is_opened(self) -> bool:
+        return self.cap is not None and self.cap.isOpened()
 
     def read(self):
-        return self.cap.read()
+        return self.cap.read() if self.is_opened() else (False, None)
 
-    def release(self):
+    def release(self) -> None:
         if self.cap is not None:
             self.cap.release()
+            self.cap = None
 
-    def info(self):
-        if not self.cap.isOpened():
-            return {}
+    def info(self) -> str:
+        if not self.is_opened():
+            return "Câmera desconectada"
+        width = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        height = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        fps = self.cap.get(cv2.CAP_PROP_FPS)
+        return f"{width}×{height} · {fps:.0f} FPS solicitados"
 
-        fourcc_int = int(self.cap.get(cv2.CAP_PROP_FOURCC))
-        fourcc = "".join(
-            chr((fourcc_int >> 8 * i) & 0xFF)
-            for i in range(4)
-        ).strip("\x00")
 
-        return {
-            "width": int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH)),
-            "height": int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT)),
-            "fps": float(self.cap.get(cv2.CAP_PROP_FPS)),
-            "fourcc": fourcc or "desconhecido",
-        }
+CameraVF0780 = Camera
