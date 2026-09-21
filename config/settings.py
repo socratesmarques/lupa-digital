@@ -1,9 +1,12 @@
 from pathlib import Path
 
 APP_NAME = "Lupa Digital"
-VERSION = "0.2.0"
-WINDOW_TITLE = f"{APP_NAME} V{VERSION} - Perfil Baixa Visão / Creative VF0780"
+VERSION = "0.5.0"
+WINDOW_TITLE = f"{APP_NAME} V{VERSION} - Orange Pi 3 LTS"
 
+# ==========================================================
+# CÂMERA - Creative Labs VF0780
+# ==========================================================
 CAMERA_INDEX = 0
 CAMERA_WIDTH = 1280
 CAMERA_HEIGHT = 720
@@ -11,16 +14,17 @@ CAMERA_FPS = 30
 CAMERA_BUFFER_SIZE = 1
 PREFER_MJPG = True
 
-# Faixa principal de leitura para preservar detalhes da câmera 720p.
+# ==========================================================
+# ZOOM PARA BAIXA VISÃO
+# ==========================================================
 ZOOM_LEVELS = [1.0, 1.25, 1.5, 1.75, 2.0, 2.25, 2.5]
-DEFAULT_ZOOM_INDEX = 2  # 1.5x
-
+DEFAULT_ZOOM_INDEX = 2
 PAN_STEP = 0.065
-
-# Qualidade máxima para a ampliação.
 UPSCALE_QUALITY = "maxima"
 
-# Melhorias de leitura.
+# ==========================================================
+# PROCESSAMENTO
+# ==========================================================
 ENABLE_AUTO_GAMMA = True
 AUTO_GAMMA_TARGET = 0.50
 
@@ -34,7 +38,6 @@ DENOISE_STRENGTH = 3
 ENABLE_SHARPEN = True
 SHARPEN_BASE_STRENGTH = 0.68
 
-# Assistência para posicionar câmera e iluminação.
 ENABLE_QUALITY_ASSIST = True
 SHARPNESS_LOW = 55.0
 SHARPNESS_GOOD = 115.0
@@ -42,14 +45,27 @@ BRIGHTNESS_DARK = 65.0
 BRIGHTNESS_BRIGHT = 205.0
 QUALITY_ROI_SCALE = 0.72
 
-# Interface.
-START_FULLSCREEN = False
-SHOW_HUD = True
-SHOW_READING_GUIDE = False
-READING_GUIDE_Y = 0.53
-READING_GUIDE_HEIGHT = 84
-SHOW_READING_MARKERS = True
-
 DEFAULT_READING_MODE_INDEX = 0
+
+# ==========================================================
+# PYSIDE6 / QT
+# ==========================================================
+START_FULLSCREEN = True
+SHOW_STATUS_PANEL = True
+SHOW_READING_GUIDE = False
+
+# Frequência da interface.
+FRAME_TIMER_MS = 33
+GPIO_TIMER_MS = 15
+
+# Guia de leitura.
+READING_GUIDE_Y = 0.53
+READING_GUIDE_HEIGHT = 86
+
+# Interface de baixa visão.
+UI_FONT_SIZE = 18
+UI_BUTTON_FONT_SIZE = 20
+UI_STATUS_HEIGHT = 68
+UI_CONTROLS_HEIGHT = 86
 
 SCREENSHOT_DIR = Path("capturas")

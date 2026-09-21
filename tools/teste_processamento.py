@@ -39,7 +39,7 @@ def criar_imagem():
 
     linhas = [
         "Este texto simula uma folha vista pela camera.",
-        "A versao 0.2.0 prioriza legibilidade.",
+        "A versao 0.5.0 usa PySide6 + OpenCV.",
         "Zoom moderado, contraste e nitidez.",
         "Perfil desenvolvido para baixa visao.",
     ]

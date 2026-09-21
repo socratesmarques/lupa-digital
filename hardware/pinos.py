@@ -1,22 +1,21 @@
 """
-Lupa Digital V0.4.3
 Orange Pi 3 LTS + Joystick Shield V1.A
+Lupa Digital V0.5.0
 
-MONTAGEM FINAL:
+MONTAGEM EXISTENTE PRESERVADA:
 
-1  -> 3.3V -> Shield VCC
-9  -> GND  -> Shield GND
+Shield VCC -> físico 1  (3.3 V)
+Shield GND -> físico 9  (GND)
 
-11 -> Shield A / D2 -> CIMA
-13 -> Shield B / D3 -> DIREITA
-15 -> Shield C / D4 -> BAIXO
-16 -> Shield D / D5 -> ESQUERDA
-18 -> Shield K / D8 -> FREEZE
+A / D2 -> físico 11 -> CIMA
+B / D3 -> físico 13 -> DIREITA
+C / D4 -> físico 15 -> BAIXO
+D / D5 -> físico 16 -> ESQUERDA
 
-24 -> Shield E / D6 -> ZOOM -
-22 -> Shield F / D7 -> ZOOM +
+E / D6 -> físico 24 -> ZOOM -
+F / D7 -> físico 22 -> ZOOM +
 
-Pino 7 não é mais utilizado.
+K / D8 -> físico 18 -> FREEZE
 """
 
 PIN_SHIELD_A = 11

@@ -15,10 +15,25 @@ from hardware.pinos import (
 
 
 class BotoesGPIO:
+    """
+    Botões digitais do Joystick Shield V1.A.
+
+    A -> cima
+    B -> direita
+    C -> baixo
+    D -> esquerda
+    E -> zoom -
+    F -> zoom +
+    K -> freeze
+
+    O driver gera somente um evento por pressionamento.
+    """
+
     def __init__(self):
         self.disponivel = False
         self.wiringpi = None
         self.GPIO = None
+        self.erro = None
 
         self._pinos_acoes = {
             PIN_SHIELD_A: Acao.CIMA,
@@ -35,16 +50,14 @@ class BotoesGPIO:
 
     def iniciar(self):
         if not GPIO_ATIVO:
-            print("[GPIO] Desativado em hardware/pinos.py.")
+            self.erro = "GPIO desativado em hardware/pinos.py"
             return False
 
         try:
             import wiringpi
             from wiringpi import GPIO
         except Exception as exc:
-            print("[GPIO] wiringOP-Python não disponível.")
-            print("[GPIO] Teclado continuará funcionando.")
-            print(f"[GPIO] Detalhe: {exc}")
+            self.erro = f"wiringOP-Python indisponível: {exc}"
             return False
 
         self.wiringpi = wiringpi
@@ -52,8 +65,9 @@ class BotoesGPIO:
 
         try:
             resultado = wiringpi.wiringPiSetupPhys()
+
             if resultado not in (0, None):
-                print("[GPIO] Erro em wiringPiSetupPhys():", resultado)
+                self.erro = f"wiringPiSetupPhys retornou {resultado}"
                 return False
 
             for pin in self._pinos_acoes:
@@ -73,21 +87,11 @@ class BotoesGPIO:
                 self._ultimo_evento[pin] = 0.0
 
             self.disponivel = True
-
-            print("[GPIO] Joystick Shield V1.A ativado.")
-            print(f"[GPIO] A / físico {PIN_SHIELD_A} -> CIMA")
-            print(f"[GPIO] B / físico {PIN_SHIELD_B} -> DIREITA")
-            print(f"[GPIO] C / físico {PIN_SHIELD_C} -> BAIXO")
-            print(f"[GPIO] D / físico {PIN_SHIELD_D} -> ESQUERDA")
-            print(f"[GPIO] E / físico {PIN_SHIELD_E} -> ZOOM -")
-            print(f"[GPIO] F / físico {PIN_SHIELD_F} -> ZOOM +")
-            print(f"[GPIO] K / físico {PIN_SHIELD_K} -> FREEZE")
+            self.erro = None
             return True
 
         except Exception as exc:
-            print("[GPIO] Falha ao inicializar GPIO.")
-            print("[GPIO] Teclado continuará funcionando.")
-            print(f"[GPIO] Detalhe: {exc}")
+            self.erro = f"Falha ao inicializar GPIO: {exc}"
             self.disponivel = False
             return False
 
@@ -108,6 +112,7 @@ class BotoesGPIO:
 
             if anterior == 1 and atual == 0:
                 ultimo = self._ultimo_evento.get(pin, 0.0)
+
                 if (agora - ultimo) >= debounce_s:
                     self._ultimo_evento[pin] = agora
                     self._ultimo_estado[pin] = atual
